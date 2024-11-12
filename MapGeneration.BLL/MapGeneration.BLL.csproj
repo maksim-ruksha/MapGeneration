@@ -7,8 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
       <PackageReference Include="EntityFramework" Version="6.5.1" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.18" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MapGeneration.DAL\MapGeneration.DAL.csproj" />
     </ItemGroup>
 
 </Project>
