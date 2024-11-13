@@ -1,4 +1,6 @@
-﻿namespace MapGeneration.DAL.Entities;
+﻿using MapGeneration.DAL.Entities.Users;
+
+namespace MapGeneration.DAL.Entities;
 
 public class MapEntity
 {

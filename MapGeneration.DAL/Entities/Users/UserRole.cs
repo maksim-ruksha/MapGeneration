@@ -1,4 +1,4 @@
-﻿namespace MapGeneration.DAL.Entities;
+﻿namespace MapGeneration.DAL.Entities.Users;
 
 public enum UserRole
 {

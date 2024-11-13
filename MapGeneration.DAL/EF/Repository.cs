@@ -23,7 +23,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         _dbSet.Add(item);
         await _context.SaveChangesAsync();
-        IEnumerable<T> dbItemEnumerable = await GetAllAsync(dbItem => dbItem.Equals(item));
+        IEnumerable<T> dbItemEnumerable = await GetAsync(dbItem => dbItem.Equals(item));
         return dbItemEnumerable.FirstOrDefault();
     }
 
@@ -33,18 +33,18 @@ public class Repository<T> : IRepository<T> where T : class
         return item;
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync(Func<T, bool> filter)
+    public async Task<IEnumerable<T>> GetAsync(Func<T, bool> filter)
     {
         return await Task.Run(() => _dbSet.Where(filter));
     }
 
-    public async void Remove(T item)
+    public async Task RemoveAsync(T item)
     {
         _dbSet.Remove(item);
         await _context.SaveChangesAsync();
     }
 
-    public async Task Update(T item)
+    public async Task UpdateAsync(T item)
     {
         _context.Entry(item).State = EntityState.Modified;
         await _context.SaveChangesAsync();

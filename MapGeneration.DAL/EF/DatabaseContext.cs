@@ -1,4 +1,5 @@
 ﻿using MapGeneration.DAL.Entities;
+using MapGeneration.DAL.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
