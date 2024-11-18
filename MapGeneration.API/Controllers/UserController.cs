@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MapGeneration.BLL.Models.Users;
+using MapGeneration.BLL.Services;
+using MapGeneration.DAL.Entities.Users;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MapGeneration.API.Controllers;
 
@@ -6,6 +9,18 @@ namespace MapGeneration.API.Controllers;
 [Route("user")]
 public class UserController: Controller
 {
+
+    private readonly ILogger<UserController> _logger;
+    private readonly IService<UserModel, UserEntity> _userService;
+    
+    public UserController(
+        ILogger<UserController> logger,
+        IService<UserModel, UserEntity> userService
+    )
+    {
+        _logger = logger;
+        _userService = userService;
+    }
 
     [HttpGet("register")]
     public Task<ActionResult> Register( /*register dto*/)

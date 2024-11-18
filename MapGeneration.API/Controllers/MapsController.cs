@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MapGeneration.BLL.Models;
+using MapGeneration.BLL.Services;
+using MapGeneration.DAL.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MapGeneration.API.Controllers;
 
@@ -6,6 +9,18 @@ namespace MapGeneration.API.Controllers;
 [Route("maps")]
 public class MapsController: Controller
 {
+    private readonly ILogger<MapsController> _logger;
+    private readonly IService<MapModel, MapEntity> _mapService;
+    
+    public MapsController(
+        ILogger<MapsController> logger,
+        IService<MapModel, MapEntity> mapService
+    )
+    {
+        _logger = logger;
+        _mapService = mapService;
+    }
+    
     [HttpGet("generate/{seed}")]
     public Task<ActionResult> Generate(string seed)
     {
