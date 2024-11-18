@@ -1,19 +1,13 @@
 ﻿using AutoMapper;
 using MapGeneration.DAL.EF;
-using NLog;
 
 namespace MapGeneration.BLL.Services;
 
 public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel : class where TEntity: class
 {
-    private readonly ILogger _logger;
     private readonly IRepository<TEntity> _repository;
     private readonly IMapper _mapper;
-
-    public Service(ILogger logger)
-    {
-        _logger = logger;
-    }
+    
     public async Task<IEnumerable<TModel>> GetAsync(Func<TEntity, bool> filter)
     {
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetAsync(filter));

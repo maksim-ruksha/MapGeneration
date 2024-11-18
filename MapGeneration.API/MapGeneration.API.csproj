@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MapGeneration.BLL\MapGeneration.BLL.csproj" />
       <ProjectReference Include="..\MapGeneration.DAL\MapGeneration.DAL.csproj" />
     </ItemGroup>
 
