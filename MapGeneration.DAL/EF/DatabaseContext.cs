@@ -12,12 +12,20 @@ public class DatabaseContext : DbContext
     public DbSet<CommentEntity> Comments { get; set; }
     public DbSet<LikeEntity> Likes { get; set; }
 
+    
     public DatabaseContext()
     {
         Database.EnsureCreated();
     }
 
+    /*
     public DatabaseContext(IConfiguration configuration)
+    {
+        Database.EnsureCreated();
+    }
+    */
+    
+    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
         Database.EnsureCreated();
     }

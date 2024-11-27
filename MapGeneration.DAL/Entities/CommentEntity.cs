@@ -8,4 +8,5 @@ public class CommentEntity
     public UserEntity Author { get; set; }
     public MapEntity Map { get; set; }
     public string Value { get; set; }
+    public DateTime DateTime { get; set; }
 }

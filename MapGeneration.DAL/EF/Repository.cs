@@ -13,11 +13,11 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = context.Set<T>();
     }
 
-    public Repository()
+    /*public Repository()
     {
         _context = new DatabaseContext();
         _dbSet = _context.Set<T>();
-    }
+    }*/
 
     public async Task<T> CreateAsync(T item)
     {
@@ -36,6 +36,18 @@ public class Repository<T> : IRepository<T> where T : class
     public async Task<IEnumerable<T>> GetAsync(Func<T, bool> filter)
     {
         return await Task.Run(() => _dbSet.Where(filter));
+    }
+
+    public async Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize, string sortField, Func<T, bool> filter)
+    {
+        int toSkip = (page - 1) * pageSize;
+        return _dbSet.OrderByColumn(sortField).Skip(toSkip).Take(pageSize);;
+    }
+
+    public async Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize, string sortField)
+    {
+        int toSkip = (page - 1) * pageSize;
+        return _dbSet.OrderByColumn(sortField).Skip(toSkip).Take(pageSize);
     }
 
     public async Task RemoveAsync(T item)

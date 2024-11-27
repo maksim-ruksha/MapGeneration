@@ -1,16 +1,49 @@
 ﻿using AutoMapper;
 using MapGeneration.DAL.EF;
+using Microsoft.Extensions.Logging;
 
 namespace MapGeneration.BLL.Services;
 
-public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel : class where TEntity: class
+public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel : class where TEntity : class
 {
     private readonly IRepository<TEntity> _repository;
     private readonly IMapper _mapper;
+    private readonly ILogger<Service<TModel, TEntity>> _logger;
+
+    public Service(
+        IRepository<TEntity> repository,
+        IMapper mapper,
+        ILogger<Service<TModel, TEntity>> logger
+        )
+    {
+        _repository = repository;
+        _mapper = mapper;
+        _logger = logger;
+    }
     
     public async Task<IEnumerable<TModel>> GetAsync(Func<TEntity, bool> filter)
     {
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetAsync(filter));
+    }
+
+    public async Task<IEnumerable<TModel>> GetPagedAsync(
+        int page,
+        int pageSize,
+        string sortField,
+        SortingDirection direction = SortingDirection.Ascending
+        )
+    {
+        return _mapper.Map<IEnumerable<TModel>>(await _repository.GetPagedAsync(page, pageSize, sortField));
+    }
+
+    public async Task<IEnumerable<TModel>> GetPagedAsync(
+        int page,
+        int pageSize,
+        string sortField,
+        Func<TEntity, bool> filter, SortingDirection direction = SortingDirection.Ascending
+        )
+    {
+        return _mapper.Map<IEnumerable<TModel>>(await _repository.GetPagedAsync(page, pageSize, sortField, filter));
     }
 
     public async Task<TModel> FindAsync(Guid id)
@@ -28,7 +61,7 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         }
         catch (Exception e)
         {
-            // TODO: log
+            _logger.LogError(e.Message);
         }
 
         return false;
@@ -43,7 +76,7 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         }
         catch (Exception e)
         {
-            // TODO: log
+            _logger.LogError(e.Message);
             return false;
         }
 
@@ -59,7 +92,7 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         }
         catch (Exception e)
         {
-            // TODO: log
+            _logger.LogError(e.Message);
             return false;
         }
 

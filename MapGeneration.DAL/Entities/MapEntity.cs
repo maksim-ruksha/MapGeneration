@@ -9,4 +9,5 @@ public class MapEntity
     public string Name { get; set; }
     public string Description { get; set; }
     public UserEntity Author { get; set; }
+    public DateTime DateTime { get; set; }
 }

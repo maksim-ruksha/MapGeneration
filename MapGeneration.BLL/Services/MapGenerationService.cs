@@ -4,6 +4,7 @@ namespace MapGeneration.BLL.Services;
 
 public class MapGenerationService: IMapGenerationService
 {
+
     // biome colors
     private static readonly Color _biomeColorDesert = ColorTranslator.FromHtml("#e0dd80"); // hot and dry
     private static readonly Color _biomeColorPlains = ColorTranslator.FromHtml("#368733"); // mid temperature, mid humidity
@@ -132,9 +133,11 @@ public class MapGenerationService: IMapGenerationService
                 bitmap.SetPixel(x, y, Color.FromArgb(pixels[y * resolution + x]));
             }
         }
+
+        return bitmap;
     }
     
-    private void SetSeeds(String seed) {
+    private void SetSeeds(string seed) {
         _riversGenerationService.SetSeed((seed + "_riversNoise").GetHashCode());
         _weirdnessGenerationService.SetSeed((seed + "_weirdnessNoise").GetHashCode());
         _heightGenerationService.SetSeed((seed + "_heightNoise").GetHashCode());

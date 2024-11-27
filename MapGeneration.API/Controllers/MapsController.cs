@@ -1,47 +1,81 @@
-﻿using MapGeneration.BLL.Models;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
+using MapGeneration.BLL.Models;
+using MapGeneration.BLL.Models.Users;
 using MapGeneration.BLL.Services;
 using MapGeneration.DAL.Entities;
+using MapGeneration.DAL.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MapGeneration.API.Controllers;
 
 [ApiController]
 [Route("maps")]
-public class MapsController: Controller
+public class MapsController : Controller
 {
+    public const int PreviewMapResolution = 256;
+    public const int GenerationPreviewResolution = 512;
+    public const int MapViewResolution = 1024;
+
     private readonly ILogger<MapsController> _logger;
     private readonly IService<MapModel, MapEntity> _mapService;
-    
+    private readonly IService<UserModel, UserEntity> _userService;
+    private readonly IMapGenerationService _mapGenerationService;
+
     public MapsController(
         ILogger<MapsController> logger,
-        IService<MapModel, MapEntity> mapService
+        IMapGenerationService mapGenerationService,
+        IService<MapModel, MapEntity> mapService,
+        IService<UserModel, UserEntity> userService
     )
     {
         _logger = logger;
         _mapService = mapService;
-    }
-    
-    [HttpGet("generate/{seed}")]
-    public Task<ActionResult> Generate(string seed)
-    {
-        throw new NotImplementedException();
+        _userService = userService;
+        _mapGenerationService = mapGenerationService;
     }
 
-    [HttpGet("generate/hd/{seed}")]
-    public Task<ActionResult> GenerateHd(string seed)
+    [HttpGet("generate/preview/{seed}")]
+    public Task<ActionResult> GeneratePreview(string seed)
     {
-        throw new NotImplementedException();
+        Bitmap map = _mapGenerationService.Generate(seed, PreviewMapResolution);
+        MemoryStream outputMemoryStream = new MemoryStream();
+        map.Save(outputMemoryStream, ImageFormat.Png);
+        outputMemoryStream.Seek(0, SeekOrigin.Begin);
+        return Task.FromResult<ActionResult>(File(outputMemoryStream, "image/png"));
     }
-    
+
+    [HttpGet("generate/generation/{seed}")]
+    public Task<ActionResult> GenerateGeneration(string seed)
+    {
+        Bitmap map = _mapGenerationService.Generate(seed, GenerationPreviewResolution);
+        MemoryStream outputMemoryStream = new MemoryStream();
+        map.Save(outputMemoryStream, ImageFormat.Png);
+        outputMemoryStream.Seek(0, SeekOrigin.Begin);
+        return Task.FromResult<ActionResult>(File(outputMemoryStream, "image/png"));
+    }
+
+    [HttpGet("generate/{seed}")]
+    public Task<ActionResult> GenerateView(string seed)
+    {
+        Bitmap map = _mapGenerationService.Generate(seed, MapViewResolution);
+        MemoryStream outputMemoryStream = new MemoryStream();
+        map.Save(outputMemoryStream, ImageFormat.Png);
+        outputMemoryStream.Seek(0, SeekOrigin.Begin);
+        return Task.FromResult<ActionResult>(File(outputMemoryStream, "image/png"));
+    }
+
     [HttpGet("")]
-    public Task<ActionResult> GetAll(string sortField,
+    public async Task<IEnumerable<MapModel>> GetAll(
+        string sortField,
         int page,
-        string direction,
+        SortingDirection direction,
         int size)
     {
-        throw new NotImplementedException();
+        
+        return await _mapService.GetPagedAsync(page, size, sortField, direction);
     }
-    
+
     [HttpGet("author")]
     public Task<ActionResult> GetAllByUser(long userId, string sortField, int page, string direction, int size)
     {
@@ -55,9 +89,14 @@ public class MapsController: Controller
     }
 
     [HttpPost("create")]
-    public Task<ActionResult> Create( /*map dto*/)
+    public async Task<ActionResult> Create(MapModel map)
     {
-        throw new NotImplementedException();
+        bool success = await _mapService.CreateAsync(map);
+        if (success)
+        {
+            return Ok();
+        }
+        return StatusCode(500);
     }
 
     [HttpGet("{id}")]
