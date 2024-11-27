@@ -14,13 +14,13 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         IRepository<TEntity> repository,
         IMapper mapper,
         ILogger<Service<TModel, TEntity>> logger
-        )
+    )
     {
         _repository = repository;
         _mapper = mapper;
         _logger = logger;
     }
-    
+
     public async Task<IEnumerable<TModel>> GetAsync(Func<TEntity, bool> filter)
     {
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetAsync(filter));
@@ -31,7 +31,7 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         int pageSize,
         string sortField,
         SortingDirection direction = SortingDirection.Ascending
-        )
+    )
     {
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetPagedAsync(page, pageSize, sortField));
     }
@@ -40,8 +40,9 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         int page,
         int pageSize,
         string sortField,
-        Func<TEntity, bool> filter, SortingDirection direction = SortingDirection.Ascending
-        )
+        SortingDirection direction,
+        Func<TEntity, bool> filter
+    )
     {
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetPagedAsync(page, pageSize, sortField, filter));
     }
@@ -97,5 +98,10 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         }
 
         return true;
+    }
+
+    public async Task<long> Count()
+    {
+        return await _repository.Count();
     }
 }

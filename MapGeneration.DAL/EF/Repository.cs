@@ -61,4 +61,9 @@ public class Repository<T> : IRepository<T> where T : class
         _context.Entry(item).State = EntityState.Modified;
         await _context.SaveChangesAsync();
     }
+
+    public Task<long> Count()
+    {
+        return Task.FromResult<long>(_dbSet.Count());
+    }
 }

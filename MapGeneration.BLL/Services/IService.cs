@@ -13,11 +13,12 @@ public interface IService<TModel, TEntity> where TModel: class where TEntity: cl
         int page,
         int pageSize,
         string sortField,
-        Func<TEntity, bool> filter,
-        SortingDirection direction
+        SortingDirection direction,
+        Func<TEntity, bool> filter
         );
     public Task<TModel> FindAsync(Guid id);
     public Task<bool> CreateAsync(TModel item);
     public Task<bool> RemoveAsync(TModel item);
     public Task<bool> UpdateAsync(TModel item);
+    public Task<long> Count();
 }
