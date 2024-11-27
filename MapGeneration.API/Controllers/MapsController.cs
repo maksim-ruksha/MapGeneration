@@ -72,14 +72,21 @@ public class MapsController : Controller
         SortingDirection direction,
         int size)
     {
-        
         return await _mapService.GetPagedAsync(page, size, sortField, direction);
     }
 
     [HttpGet("author")]
-    public Task<ActionResult> GetAllByUser(long userId, string sortField, int page, string direction, int size)
+    public async Task<IEnumerable<MapModel>> GetAllByUser(
+        Guid userId,
+        string sortField,
+        int page,
+        SortingDirection direction,
+        int size)
     {
-        throw new NotImplementedException();
+        return await _mapService.GetPagedAsync(page, size, sortField, direction,
+            map =>
+                map.Author.Id == userId
+        );
     }
 
     [HttpGet("pages")]
@@ -96,11 +103,12 @@ public class MapsController : Controller
         {
             return Ok();
         }
+
         return StatusCode(500);
     }
 
     [HttpGet("{id}")]
-    public Task<ActionResult> Read(long id)
+    public Task<ActionResult> Read(Guid id)
     {
         throw new NotImplementedException();
     }
