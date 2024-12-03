@@ -26,11 +26,16 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetAsync(filter));
     }
 
+    public async Task<TModel> GetFirstAsync(Func<TEntity, bool> filter)
+    {
+        return _mapper.Map<TModel>((await _repository.GetAsync(filter)).First());
+    }
+
     public async Task<IEnumerable<TModel>> GetPagedAsync(
         int page,
         int pageSize,
         string sortField,
-        SortingDirection direction = SortingDirection.Ascending
+        SortingDirection direction
     )
     {
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetPagedAsync(page, pageSize, sortField));
@@ -44,6 +49,7 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         Func<TEntity, bool> filter
     )
     {
+        
         return _mapper.Map<IEnumerable<TModel>>(await _repository.GetPagedAsync(page, pageSize, sortField, filter));
     }
 
@@ -98,6 +104,11 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         }
 
         return true;
+    }
+
+    public Task<IEnumerable<TModel>> AsNoTracking(Func<TEntity, bool> filter)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<long> Count()

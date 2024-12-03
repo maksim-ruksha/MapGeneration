@@ -45,7 +45,7 @@ public class MapsController : Controller
         return Task.FromResult<ActionResult>(File(outputMemoryStream, "image/png"));
     }
 
-    [HttpGet("generate/generation/{seed}")]
+    [HttpGet("generate/hd/{seed}")]
     public Task<ActionResult> GenerateGeneration(string seed)
     {
         Bitmap map = _mapGenerationService.Generate(seed, GenerationPreviewResolution);
@@ -90,32 +90,48 @@ public class MapsController : Controller
     }
 
     [HttpGet("pages")]
-    public Task<ActionResult> GetPagesCount(long pageSize)
+    public async Task<ActionResult> GetPagesCount(long pageSize)
     {
-        throw new NotImplementedException();
+        long totalMaps = await _mapService.Count();
+        decimal d = (decimal) totalMaps / pageSize;
+        return Ok(Math.Ceiling(d));
     }
 
     [HttpPost("create")]
-    public async Task<ActionResult> Create(MapModel map)
+    public async Task<ActionResult> Create(MapModel mapModel)
     {
-        bool success = await _mapService.CreateAsync(map);
-        if (success)
-        {
-            return Ok();
-        }
+        UserModel user = await _userService.FindAsync(mapModel.Author.Id);
+        mapModel.Author = user;
+        mapModel.DateTime = DateTime.UtcNow;
 
-        return StatusCode(500);
+        bool success = await _mapService.CreateAsync(mapModel);
+        if (!success)
+        {
+            return StatusCode(500);
+        }
+        
+        MapModel createdMap = await _mapService.GetFirstAsync(map => map.Author.Id == user.Id);
+        return Ok(createdMap);
     }
 
     [HttpGet("{id}")]
-    public Task<ActionResult> Read(Guid id)
+    public async Task<ActionResult> Get(Guid id)
     {
-        throw new NotImplementedException();
+        MapModel map = await _mapService.FindAsync(id);
+        return Ok(map);
     }
 
     [HttpPut("update")]
-    public Task<ActionResult> Update( /*map dto*/)
+    public async Task<ActionResult> Update(MapModel mapModel)
     {
-        throw new NotImplementedException();
+        bool success = await _mapService.UpdateAsync(mapModel);
+        if (!success)
+        {
+            return StatusCode(500);
+        }
+
+        MapModel updatedMap = await _mapService.FindAsync(mapModel.Id);
+        return Ok(updatedMap);
+        //throw new NotImplementedException();
     }
 }

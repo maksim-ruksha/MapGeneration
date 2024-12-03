@@ -31,7 +31,7 @@ public class MapGenerationService: IMapGenerationService
     // controls index 0 (0 <= index 0 < NOISE_LEVEL_LOW_HEIGHT)
     private const float NoiseLevelLowHeight = 0.333f;
 
-    // controls index 1 (NOISE_LEVEL_LOW_HEIGHT <= index 0 < NOISE_LEVEL_MID_HEIGHT), NOISE_LEVEL_MID_HEIGHT < index 2 < 1
+    // controls index 1 (NOISE_LEVEL_LOW_HEIGHT <= index 1 < NOISE_LEVEL_MID_HEIGHT), NOISE_LEVEL_MID_HEIGHT < index 2 < 1
     private const float NoiseLevelMidHeight = 0.5f;
 
     // index 0, 1, 2

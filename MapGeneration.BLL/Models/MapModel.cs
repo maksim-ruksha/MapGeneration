@@ -9,4 +9,5 @@ public class MapModel
     public string Name { get; set; }
     public string Description { get; set; }
     public UserModel Author { get; set; }
+    public DateTime DateTime { get; set; }
 }

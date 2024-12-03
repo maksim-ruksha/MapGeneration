@@ -1,8 +1,11 @@
-﻿namespace MapGeneration.BLL.Services;
+﻿using MapGeneration.BLL.Models.Users;
+
+namespace MapGeneration.BLL.Services;
 
 public interface IService<TModel, TEntity> where TModel: class where TEntity: class
 {
     public Task<IEnumerable<TModel>> GetAsync(Func<TEntity, bool> filter);
+    public Task<TModel> GetFirstAsync(Func<TEntity, bool> filter);
     public Task<IEnumerable<TModel>> GetPagedAsync(
         int page,
         int pageSize,
@@ -20,5 +23,6 @@ public interface IService<TModel, TEntity> where TModel: class where TEntity: cl
     public Task<bool> CreateAsync(TModel item);
     public Task<bool> RemoveAsync(TModel item);
     public Task<bool> UpdateAsync(TModel item);
+    public Task<IEnumerable<TModel>> AsNoTracking(Func<TEntity, bool> filter);
     public Task<long> Count();
 }

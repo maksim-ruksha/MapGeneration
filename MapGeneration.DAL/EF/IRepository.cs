@@ -9,5 +9,6 @@ public interface IRepository<T> where T: class
     public Task<IEnumerable<T>> GetPagedAsync(int page, int pageSize, string sortField);
     public Task RemoveAsync(T item);
     public Task UpdateAsync(T item);
+    public Task<IEnumerable<T>> AsNoTracking(Func<T, bool> filter);
     public Task<long> Count();
 }

@@ -25,7 +25,7 @@ public class CommentsController : Controller
     public async Task<ActionResult> GetMapComments(string sortField, int page, string direction, int size)
     {
         throw new NotImplementedException();
-    }
+    }   
 
     [HttpGet("getPagesCount")]
     public async Task<ActionResult> GetPagesCount(long mapId, long pageSize)
@@ -34,7 +34,7 @@ public class CommentsController : Controller
     }
 
     [HttpPost("send")]
-    public async Task<ActionResult> SendComment( /*TODO: CommentDto*/)
+    public async Task<ActionResult> SendComment([FromQuery]CommentModel commentModel)
     {
         throw new NotImplementedException();
     }
