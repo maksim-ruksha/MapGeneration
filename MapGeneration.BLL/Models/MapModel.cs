@@ -8,6 +8,7 @@ public class MapModel
     public string Seed { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
-    public UserModel Author { get; set; }
+    public Guid AuthorId { get; set; }
+    public UserModel? Author { get; set; }
     public DateTime DateTime { get; set; }
 }

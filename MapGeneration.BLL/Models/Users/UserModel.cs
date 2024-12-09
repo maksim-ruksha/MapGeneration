@@ -6,4 +6,5 @@ public class UserModel
     public string Name { get; set; }
     public UserRole Role { get; set; }
     public string PasswordHash { get; set; }
+    public List<MapModel> Maps { get; set; }
 }
