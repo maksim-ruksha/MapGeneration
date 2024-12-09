@@ -18,20 +18,19 @@ public class MapsController : Controller
     public const int MapViewResolution = 1024;
 
     private readonly ILogger<MapsController> _logger;
-    private readonly IService<MapModel, MapEntity> _mapService;
+    private readonly IMapService _mapService;
     private readonly IService<UserModel, UserEntity> _userService;
     private readonly IMapGenerationService _mapGenerationService;
 
     public MapsController(
         ILogger<MapsController> logger,
         IMapGenerationService mapGenerationService,
-        IService<MapModel, MapEntity> mapService,
-        IService<UserModel, UserEntity> userService
-    )
+        IService<UserModel, UserEntity> userService,
+        IMapService mapService)
     {
         _logger = logger;
-        _mapService = mapService;
         _userService = userService;
+        _mapService = mapService;
         _mapGenerationService = mapGenerationService;
     }
 
@@ -83,34 +82,20 @@ public class MapsController : Controller
         SortingDirection direction,
         int size)
     {
-        return await _mapService.GetPagedAsync(page, size, sortField, direction,
-            map =>
-                map.Author.Id == userId
-        );
+        UserModel userModel = await _userService.FindAsync(userId);
+        return await _mapService.GetPagedByUserAsync(page, size, sortField, direction, userModel);
     }
 
     [HttpGet("pages")]
-    public async Task<ActionResult> GetPagesCount(long pageSize)
+    public async Task<ActionResult> GetPagesCount(int pageSize)
     {
-        long totalMaps = await _mapService.Count();
-        decimal d = (decimal) totalMaps / pageSize;
-        return Ok(Math.Ceiling(d));
+        return Ok(_mapService.GetPagesCount(pageSize));
     }
 
     [HttpPost("create")]
     public async Task<ActionResult> Create(MapModel mapModel)
     {
-        UserModel user = await _userService.FindAsync(mapModel.Author.Id);
-        mapModel.Author = user;
-        mapModel.DateTime = DateTime.UtcNow;
-
-        bool success = await _mapService.CreateAsync(mapModel);
-        if (!success)
-        {
-            return StatusCode(500);
-        }
-        
-        MapModel createdMap = await _mapService.GetFirstAsync(map => map.Author.Id == user.Id);
+        MapModel createdMap = await _mapService.Create(mapModel);
         return Ok(createdMap);
     }
 
@@ -124,14 +109,7 @@ public class MapsController : Controller
     [HttpPut("update")]
     public async Task<ActionResult> Update(MapModel mapModel)
     {
-        bool success = await _mapService.UpdateAsync(mapModel);
-        if (!success)
-        {
-            return StatusCode(500);
-        }
-
-        MapModel updatedMap = await _mapService.FindAsync(mapModel.Id);
+        MapModel updatedMap = await _mapService.UpdateAsync(mapModel);
         return Ok(updatedMap);
-        //throw new NotImplementedException();
     }
 }
