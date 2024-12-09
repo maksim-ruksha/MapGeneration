@@ -16,7 +16,7 @@ public class Repository<T> : IRepository<T> where T : class
     public async Task<T> CreateAsync(T item)
     {
         _dbSet.Add(item);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();  
         IEnumerable<T> dbItemEnumerable = await GetAsync(dbItem => dbItem.Equals(item));
         return dbItemEnumerable.FirstOrDefault();
     }
@@ -24,6 +24,13 @@ public class Repository<T> : IRepository<T> where T : class
     public async Task<T> FindAsync(Guid id)
     {
         T item = await _dbSet.FindAsync(id);
+        return item;
+    }
+
+    public async Task<T> FindAsNoTrackingAsync(Guid id)
+    {
+        T item = await _dbSet.FindAsync(id);
+        _context.Entry(item).State = EntityState.Detached;
         return item;
     }
 
@@ -54,6 +61,16 @@ public class Repository<T> : IRepository<T> where T : class
     {
         _context.Entry(item).State = EntityState.Modified;
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<T>> AsNoTracking(Func<T, bool> filter)
+    {
+        return await Task.Run(() => _dbSet.AsNoTracking().Where(filter));
+    }
+
+    public async Task<T> AsNoTrackingFirst(Func<T, bool> filter)
+    {
+        return await Task.Run(() => _dbSet.AsNoTracking().Where(filter).First());
     }
 
     public Task<long> Count()
