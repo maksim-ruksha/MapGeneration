@@ -58,6 +58,11 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         return _mapper.Map<TModel>(await _repository.FindAsync(id));
     }
 
+    public async Task<TModel> FindAsNoTrackingAsync(Guid id)
+    {
+        return _mapper.Map<TModel>(await _repository.FindAsNoTrackingAsync(id));
+    }
+
     public async Task<bool> CreateAsync(TModel item)
     {
         try
@@ -106,9 +111,14 @@ public class Service<TModel, TEntity> : IService<TModel, TEntity> where TModel :
         return true;
     }
 
-    public Task<IEnumerable<TModel>> AsNoTracking(Func<TEntity, bool> filter)
+    public async Task<IEnumerable<TModel>> AsNoTracking(Func<TEntity, bool> filter)
     {
-        throw new NotImplementedException();
+        return _mapper.Map<IEnumerable<TModel>>(await _repository.AsNoTracking(filter));
+    }
+
+    public async Task<TModel> AsNoTrackingFirst(Func<TEntity, bool> filter)
+    {
+        return  _mapper.Map<TModel>(await _repository.AsNoTrackingFirst(filter));
     }
 
     public async Task<long> Count()

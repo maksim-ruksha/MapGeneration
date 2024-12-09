@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using MapGeneration.BLL.Mapping;
 using MapGeneration.BLL.Models;
 using MapGeneration.BLL.Models.Users;
@@ -60,16 +61,22 @@ services.AddScoped<IRepository<CommentEntity>, Repository<CommentEntity>>();
 
 services.AddScoped<IService<UserModel, UserEntity>, Service<UserModel, UserEntity>>();
 services.AddScoped<IService<MapModel, MapEntity>, Service<MapModel, MapEntity>>();
+services.AddScoped<IMapService, MapService>();
 services.AddScoped<IService<LikeModel, LikeEntity>, Service<LikeModel, LikeEntity>>();
 services.AddScoped<IService<CommentModel, CommentEntity>, Service<CommentModel, CommentEntity>>();
 
 services.AddScoped<IService<CommentModel, CommentEntity>, Service<CommentModel, CommentEntity>>();
 
-services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true)
+    .AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);;
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
+
 services.AddDbContext<DatabaseContext>(optionsActions =>
-    optionsActions.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+{
+    optionsActions.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+});
 
 WebApplication app = builder.Build();
 
